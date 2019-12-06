@@ -1,0 +1,18 @@
+{
+    "socialminer": {
+        "host": "10.10.20.11"
+    },
+
+    "chat": {
+        "feedid": "100040",
+        "author": "Web Guest",
+        "title": "New visitor on web page",
+        "pollingInterval": 2000
+    },
+
+    "popup": {
+        "elementid": "popup_chat_div",
+        "initdelay": 1000,
+        "myself": "Me"
+    }
+}
