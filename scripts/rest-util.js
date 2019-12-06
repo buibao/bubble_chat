@@ -49,7 +49,10 @@ var restUtil = {
             data        : constructMessagePayload(message),
             contentType : constants.xmlMIMEType,
             crossDomain : true,
-            xhrFields   : { withCredentials: true }  // Required to share session cookie while making cross-domain requests
+            xhrFields   : { withCredentials: true },  // Required to share session cookie while making cross-domain requests
+            success: function(xml) {
+                        checkCookie();
+            }
         });
     },
 
@@ -66,13 +69,7 @@ var restUtil = {
      getTranscriptDownloadUrl: function()
         {
             // A locale can be specified with the 'locale' parameter.
-            //
-        //     return $.get({
-        //     url         : constants.scheme + config.socialminer.host + constants.chatURI + "/transcript.xml",
-        //     crossDomain : true,
-        //     xhrFields   : { withCredentials: true }  // Required to share session cookie while making cross-domain requests
-        // });
-        return  constants.scheme + config.socialminer.host + constants.chatURI + "/transcript.pdf?locale=en_ALL";
+        return  constants.scheme + config.socialminer.host + constants.chatURI + "/transcript.xml";//"/transcript.pdf?locale=en_ALL";
      }
 
 };
@@ -81,7 +78,7 @@ function constructPostPayload () {
     var feedRefURL = constants.scheme + config.socialminer.host + constants.feedRefURL + config.chat.feedid;
     var chatPostPayload =   '<SocialContact>' +
                                 '<feedRefURL>' + feedRefURL + '</feedRefURL>' +
-                                '<author>' + config.chat.author  + '</author>' +
+                                '<author>' + (session.name != undefined && NullorEmptyString(session.name) ? session.name : config.chat.author)  + '</author>' +
                                 '<title>' + config.chat.title  + '</title>' +
                                 '<extensionFields>' +
                                     '<extensionField>' +
@@ -90,11 +87,15 @@ function constructPostPayload () {
                                     '</extensionField>' +
                                     '<extensionField>' +
                                         '<name>h_Name</name>' +
-                                        '<value>' + config.chat.author + '</value>' +
+                                        '<value>' + (session.name != undefined && NullorEmptyString(session.name)? session.name : config.chat.author) + '</value>' +
                                     '</extensionField>' +
                                     '<extensionField>' +
                                         '<name>Email</name>' +
-                                        '<value>' + "buibao1997@gmail.com" + '</value>' +
+                                        '<value>' + (session.email != undefined && NullorEmptyString(session.email) ? session.email : "Unknown") + '</value>' +
+                                    '</extensionField>' +
+                                    '<extensionField>' +
+                                        '<name>Phone</name>' +
+                                        '<value>' + (session.phone != undefined && NullorEmptyString(session.phone)? session.phone : "Unknown") + '</value>' +
                                     '</extensionField>' +
                                 '</extensionFields>' +
                             '</SocialContact>';

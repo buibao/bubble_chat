@@ -14,5 +14,17 @@
         "elementid": "popup_chat_div",
         "initdelay": 1000,
         "myself": "Me"
+    },
+   
+    "cookie":{
+        "name"  :"i3_chat_history",
+        "exdays":30
+    },
+    "bot":{
+        "welcome_back": "Welcome back "
+    },
+    "message_type":{
+        "bot":"Bot",
+        "agent":"Agent"
     }
 }

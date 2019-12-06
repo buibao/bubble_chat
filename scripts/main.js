@@ -31,6 +31,7 @@ $(document).ready(function() {
 
     loadConfig();
     // auto-initiate a chat to SocialMiner after a fixed duration
+    loadHisotryChat();
     
 });
 
@@ -59,12 +60,20 @@ function StartChat(){
       session.startChat = true;
 }
 
+function getInfo(){
+
+        session.name = $("#info_name").val();
+        session.email = $("#info_email").val();
+        session.phone = $("#info_phone").val();
+        console.log(session.name,session.email,session.phone);
+}
+  
 /**
  * Initiates (POST) a chat request to SocialMiner
  */
 function initiateChatToSocialMiner() {
     console.log("Initiating chat request to SocialMiner " + config.socialminer.host);
-    createMsgIncome("Please watting Customer Care join to chat room.");
+   
     restUtil.postChatRequest().done(function(data, textStatus, jqXHR) {
             // update session
             session.scRefURL = jqXHR.getResponseHeader(constants.locationHeader);
@@ -75,11 +84,9 @@ function initiateChatToSocialMiner() {
             //     // chatbox_ui.launch();    
             //     session.launched = true;
             // }
-            // chatbox_ui.showMessage(decodeString("System"), decodeString("Thank you for contacting us. An operator will be with you shortly."));
-            // chatbox_ui.showMessage(decodeString("System"), decodeString("Thank you for contacting us. An operator will be with you shortly."));
             // start polling for chat events from SocialMiner
             session.pollerID = setInterval(pollForChatEvents, config.chat.pollingInterval);
-
+            createMsgIncome("Please watting Customer Care join to chat room.","Bot");
         }) 
         .fail(function(jqXHR, textStatus) {
             console.error('Failed to initiate chat request! Response status = ' + jqXHR.status);
@@ -90,7 +97,7 @@ function initiateChatToSocialMiner() {
  * Does one poll for chat events from SocialMiner, parses the set of events
  * received and updates the chat accordingly
  */
- function processGetTranScript(){
+ function processGetTranScriptTest(){
 
     //.css('display', 'none')
   $('<iframe id="downloadFrame">').width(1000).height(250)
@@ -104,24 +111,29 @@ function pollForChatEvents() {
     restUtil.getChatEvents(session.latestEventID)
             .done(function(data, textStatus, jqXHR) {
                 // parse the XML response
-                 console.log('textStatus: ',textStatus);
-                 console.log('jqXHR: ',jqXHR);
+                 // console.log('textStatus: ',textStatus);
+                 // console.log('jqXHR: ',jqXHR);
                 var chatEvents = $.xml2json(data);
-                console.log('Received chat events: ' + JSON.stringify(chatEvents));
+                // console.log('Received chat events: ' + JSON.stringify(chatEvents));
 
                 // process message events
                 if (chatEvents && chatEvents.MessageEvent) {
+                    
                    
+                    //processGetTranScript();
                     processIncomingMessages(chatEvents.MessageEvent);
+                    // Create/Update message
+                    checkCookie();
+                
                 }
                 if(chatEvents && chatEvents.PresenceEvent){
                    if (!session.launched && chatEvents.PresenceEvent.status == "joined") {
-                        createMsgIncome("Customer Care joined to the chat room.");
+                        createMsgIncome("Customer Care joined to the chat room.","Bot");
                         session.launched = true;
                     }
                     processEndChat(chatEvents.PresenceEvent);
                 }
-
+               
               
             }) // When end of Chat inactivity timeout - config from CCX
             .fail(function(messages) {
@@ -131,13 +143,102 @@ function pollForChatEvents() {
                }
             })
 }
+function processGetTranScript(){
+                   // Get data TranscriptXml
+                var dataTranscriptXml = restUtil.getTranscriptDownloadUrl();
+                var dataJson = "";
+                $.ajax({
+                          type: "GET",
+                          url: dataTranscriptXml,
+                          dataType: "xml",
+                          crossDomain : true,
+                          xhrFields   : { withCredentials: true }, // Required to share session cookie while making cross-domain requests
+                          success: function(xml) {
+                           // console.log("xml :",xml.documentElement.outerHTML);
+                           // covnert xml to json
+                            // console.log(xml.documentElement.outerHTML);
+                             var dataTranscriptJson = $.xml2json(xml.documentElement.outerHTML);
+                             var dataJsonp = JSON.stringify(dataTranscriptJson);
+                            console.log("history: ",dataJsonp);
+                             if (dataJsonp != "" && dataJsonp != null) {
+                               setCookie(dataJsonp);
+                             }
+                          },
+                          error: function(xhrReq, textStatus, errorThrown) {
+                             dataCookie = "";
+                          }
+                   });
+               
+}
+function loadHisotryChat() {
+   // check exists history chat
+      if(getCookie(config.cookie.name) != undefined)
+      {
+        var dtHistory = JSON.parse($.cookie(config.cookie.name));
+        dtHistory.customer == config.chat.author 
+                            ? (createMsgIncome(config.bot.welcome_back, "Bot"),
+                              createMsgIncomeQuestion("input","text","form-control","info_name","","info_name","Enter name",""),
+                              createMsgIncomeQuestion("button","button","btn btn-default","btn_start","","","","Create info",'getInfo()')
+                              )
+                            : (createMsgIncome(config.bot.welcome_back.concat(", ").concat(dtHistory.customer)),
+                               session.name = dtHistory.customer
+                              );
+        // Load history
+        var arrChat = dtHistory.transcript.chat;
+        if(arrChat.length > 0){
+          createMsgIncome("----------History----------", "Bot");
+          for (var i = 0; i < arrChat.length; i++) {
+                // client's chat
+                if(arrChat[i].name == dtHistory.customer){
+                  createMsgOut(arrChat[i].msg);
+                } // agent's chat
+                else {
+                  createMsgIncome(arrChat[i].msg);
+                }
+          }
+      
+        }
 
+       
+      }else{
+            createMsgIncome("Welcome to i3 international.", "Bot");  
+            createMsgIncomeQuestion("input","text","form-control","info_name","","info_name","Enter name","");
+            createMsgIncomeQuestion("input","email","form-control","info_email","info_email","","Enter email","");
+            createMsgIncomeQuestion("input","numberphone","form-control","info_phone","info_phone","","Enter phone","");
+            createMsgIncomeQuestion("button","button","btn btn-default","btn_start","","","","Create info",'getInfo()');
+      }             
+     
+     
+
+}
+
+function setCookie(cvalue) {
+  var cname = config.cookie.name;
+  $.cookie(cname,cvalue);
+}
+
+function getCookie(cname) {
+ var Cookie =  $.cookie(cname);
+  return Cookie != undefined ? Cookie : undefined;
+}
+function checkCookie() {
+  var history=getCookie(config.cookie.name);
+  
+  if (history != undefined) {
+    processGetTranScript();
+  } else {
+     // history = prompt("Please enter your name:","");
+    processGetTranScript();
+    
+  }
+}
 // Event for a Agent chat with a Customer, if multi chat need fix right here
 function EndChat(messages){
      if(messages == "left"){
                     console.log("Need close chat");
                     // chatbox_ui.showMessage(decodeString("System"), decodeString("You are alone in the chat room. Click (X) to close the chat interface."));
-                    createMsgIncome("You are alone in the chat room.");
+                    createMsgIncome("You are alone in the chat room.", "Bot");
+                   
                     // stop polling for chat events
                     clearInterval(session.pollerID);
                     // delete chat session with SocialMiner
@@ -145,6 +246,7 @@ function EndChat(messages){
                         console.log('Chat session terminated successfully.');
                     });
                     session.startChat = undefined;//session.startChat = undefined;
+                 
         }
 }
 // Event for a Agent chat with a Customer, if multi chat need fix right here
@@ -167,12 +269,12 @@ function processIncomingMessages(messages) {
     if ($.isArray(messages)) {
         for (var i = 0; i < messages.length; i++) {
             // chatbox_ui.showMessage(decodeString(messages[i].from), decodeString(messages[i].body));
-             createMsgIncome(messages[i].body);
+             createMsgIncome(decodeString(messages[i].body));
             session.latestEventID = parseInt(messages[i].id);
         }
     } else {
         // chatbox_ui.showMessage(decodeString(messages.from), decodeString(messages.body));
-        createMsgIncome(messages.body);
+        createMsgIncome(decodeString(messages.body));
         session.latestEventID = parseInt(messages.id);
     }
 }
@@ -203,7 +305,7 @@ function createMsgOut(messages){
       element.scrollTop = element.scrollHeight;
 }
 
-function createMsgIncome(messages){
+function createMsgIncome(messages,tyle_ = null){
 
       var contentIncome = document.createElement('div');
       $(contentIncome).addClass("received-chats");
@@ -212,8 +314,9 @@ function createMsgIncome(messages){
       $(contentIncomeImg).addClass("received-chats-img");
 
       var createImg = document.createElement("img");
-      $(createImg).attr("src","img/v1.png");
 
+      tyle_ == null ?  $(createImg).attr("src","img/v1.png") : $(createImg).attr("src","img/bot.gif");
+     
       contentIncomeImg.appendChild(createImg);
 
 
@@ -310,4 +413,7 @@ function decodeString(str) {
     str = str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\"/g, '&quot;').replace(/\'/g, '&#x27;').replace(/\//g, '&#x2f;');
 
     return str;
+}
+function  NullorEmptyString(msg) {
+   return msg.replace(/^\s+|\s+$/g, "").length != 0 ? true : false;
 }
