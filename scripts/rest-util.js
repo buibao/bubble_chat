@@ -22,7 +22,7 @@
 var restUtil = {
     postChatRequest : function () {
         console.log('POSTing a chat request to SocialMiner ' + config.socialminer.host);
-        return $.post({
+         return $.post({
             url         : constants.scheme + config.socialminer.host + constants.chatURI,
             data        : constructPostPayload(),
             contentType : constants.xmlMIMEType,
@@ -34,7 +34,7 @@ var restUtil = {
     getChatEvents : function (eventID) {
         console.log('GETting chat events from SocialMiner ' + config.socialminer.host + ' since eventID ' + eventID);
         return $.get({
-            url         : constants.scheme + config.socialminer.host + constants.chatURI + constants.chatEventsPathParam + eventID+ '&all=true',
+            url         : constants.scheme + config.socialminer.host + constants.chatURI + constants.chatEventsPathParam + eventID,
             crossDomain : true,
             xhrFields   : { withCredentials: true }  // Required to share session cookie while making cross-domain requests
         });
@@ -80,6 +80,7 @@ function constructPostPayload () {
                                 '<feedRefURL>' + feedRefURL + '</feedRefURL>' +
                                 '<author>' + (session.name != undefined && NullorEmptyString(session.name) ? session.name : config.chat.author)  + '</author>' +
                                 '<title>' + config.chat.title  + '</title>' +
+                                '<tags>' + config.chat.tags  + '</tags>' +
                                 '<extensionFields>' +
                                     '<extensionField>' +
                                         '<name>ccxqueuetag</name>' +

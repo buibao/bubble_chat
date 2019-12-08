@@ -62,10 +62,13 @@ function StartChat(){
 
 function getInfo(){
 
+       
         session.name = $("#info_name").val();
         session.email = $("#info_email").val();
         session.phone = $("#info_phone").val();
         console.log(session.name,session.email,session.phone);
+        setTimeout(initiateChatToSocialMiner, config.popup.initdelay);
+        session.startChat = true;
 }
   
 /**
@@ -89,7 +92,10 @@ function initiateChatToSocialMiner() {
             createMsgIncome("Please watting Customer Care join to chat room.","Bot");
         }) 
         .fail(function(jqXHR, textStatus) {
-            console.error('Failed to initiate chat request! Response status = ' + jqXHR.status);
+          console.log("jqXHR :",jqXHR);
+          console.log("textStatus :",textStatus);
+          console.error('Failed to initiate chat request! Response status = ' + jqXHR.status);
+          session.startChat = undefined;//session.startChat = undefined;
         });
 }
 
@@ -111,11 +117,10 @@ function pollForChatEvents() {
     restUtil.getChatEvents(session.latestEventID)
             .done(function(data, textStatus, jqXHR) {
                 // parse the XML response
-                 // console.log('textStatus: ',textStatus);
-                 // console.log('jqXHR: ',jqXHR);
+                 console.log('textStatus: ',textStatus);
+                 console.log('jqXHR: ',jqXHR);
                 var chatEvents = $.xml2json(data);
-                // console.log('Received chat events: ' + JSON.stringify(chatEvents));
-
+                console.log('Received chat events: ' + JSON.stringify(chatEvents));
                 // process message events
                 if (chatEvents && chatEvents.MessageEvent) {
                     
@@ -159,7 +164,7 @@ function processGetTranScript(){
                             // console.log(xml.documentElement.outerHTML);
                              var dataTranscriptJson = $.xml2json(xml.documentElement.outerHTML);
                              var dataJsonp = JSON.stringify(dataTranscriptJson);
-                            console.log("history: ",dataJsonp);
+                            // console.log("history: ",dataJsonp);
                              if (dataJsonp != "" && dataJsonp != null) {
                                setCookie(dataJsonp);
                              }
@@ -172,44 +177,60 @@ function processGetTranScript(){
 }
 function loadHisotryChat() {
    // check exists history chat
+     
       if(getCookie(config.cookie.name) != undefined)
       {
         var dtHistory = JSON.parse($.cookie(config.cookie.name));
-        dtHistory.customer == config.chat.author 
-                            ? (createMsgIncome(config.bot.welcome_back, "Bot"),
-                              createMsgIncomeQuestion("input","text","form-control","info_name","","info_name","Enter name",""),
-                              createMsgIncomeQuestion("button","button","btn btn-default","btn_start","","","","Create info",'getInfo()')
-                              )
-                            : (createMsgIncome(config.bot.welcome_back.concat(", ").concat(dtHistory.customer)),
-                               session.name = dtHistory.customer
-                              );
-        // Load history
+        console.log(dtHistory);
+        // Start Load history
         var arrChat = dtHistory.transcript.chat;
         if(arrChat.length > 0){
-          createMsgIncome("----------History----------", "Bot");
+         
           for (var i = 0; i < arrChat.length; i++) {
                 // client's chat
                 if(arrChat[i].name == dtHistory.customer){
-                  createMsgOut(arrChat[i].msg);
+                  createMsgOut(arrChat[i].msg,convertTimeStamp(arrChat[i].time));
                 } // agent's chat
                 else {
-                  createMsgIncome(arrChat[i].msg);
+                  createMsgIncome(arrChat[i].msg,null,convertTimeStamp(arrChat[i].time));
                 }
           }
       
         }
-
-       
+        createMsgIncome("--------------------History--------------------", "Bot");
+        // End Load history
+        
+        dtHistory.customer == config.chat.author 
+                            ? (createMsgIncome(config.bot.welcome_back, "Bot"),
+                               createMsgIncomeQuestion("input","text","form-control","info_name","","info_name","Enter name",""),
+                               createMsgIncomeQuestion("button","button","btn btn-default","btn_start","","","","Start chat",'getInfo()')
+                              )
+                            : (createMsgIncome(config.bot.welcome_back.concat(", ").concat(dtHistory.customer)),
+                               session.name = dtHistory.customer
+                              );
+        
       }else{
             createMsgIncome("Welcome to i3 international.", "Bot");  
             createMsgIncomeQuestion("input","text","form-control","info_name","","info_name","Enter name","");
             createMsgIncomeQuestion("input","email","form-control","info_email","info_email","","Enter email","");
             createMsgIncomeQuestion("input","numberphone","form-control","info_phone","info_phone","","Enter phone","");
-            createMsgIncomeQuestion("button","button","btn btn-default","btn_start","","","","Create info",'getInfo()');
+            createMsgIncomeQuestion("button","button","btn btn-default","btn_start","","","","Start chat",'getInfo()');
       }             
      
      
 
+}
+function convertTimeStamp(unix_timestamp){
+  var isIE=(navigator.appName.indexOf("Microsoft")!=-1)?1:0;
+  var yourday = new Date(parseInt(unix_timestamp));
+  normalize=(yourday.getTimezoneOffset()/60)+2;
+  var tmp=new Date(yourday.getTime());
+return tmp.toLocaleString([],{hour12:true,hour: '2-digit', minute:'2-digit', second: '2-digit'});
+}
+function getCurrentTime(){
+   var today = new Date();
+   var time = today.toLocaleString([],{hour12:true,hour: '2-digit', minute:'2-digit', second: '2-digit'});//today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+   return time;
 }
 
 function setCookie(cvalue) {
@@ -279,7 +300,7 @@ function processIncomingMessages(messages) {
     }
 }
 
-function createMsgOut(messages){
+function createMsgOut(messages,current_time = null){
 
       var contentOut = document.createElement('div');
       $(contentOut).addClass("outgoing-chat");
@@ -292,7 +313,7 @@ function createMsgOut(messages){
 
       var createSpan = document.createElement("span");
       $(createSpan).addClass("time");
-      $(createSpan).text("11:09 | Dec 02");
+      current_time != null ? $(createSpan).text(current_time.toLocaleString([],{hour12:true,hour: '2-digit', minute:'2-digit', second: '2-digit'})) : $(createSpan).text(getCurrentTime());
 
       contentOutChild.appendChild(createP);
       contentOutChild.appendChild(createSpan);
@@ -305,7 +326,7 @@ function createMsgOut(messages){
       element.scrollTop = element.scrollHeight;
 }
 
-function createMsgIncome(messages,tyle_ = null){
+function createMsgIncome(messages,tyle_ = null,current_time = null){
 
       var contentIncome = document.createElement('div');
       $(contentIncome).addClass("received-chats");
@@ -331,7 +352,7 @@ function createMsgIncome(messages,tyle_ = null){
 
       var createSpan = document.createElement("span");
       $(createSpan).addClass("time");
-      $(createSpan).text("11:09 | Dec 02");
+      current_time != null ? $(createSpan).text(current_time.toLocaleString([],{hour12:true,hour: '2-digit', minute:'2-digit', second: '2-digit'})) : $(createSpan).text(getCurrentTime());
 
       contentIncomeMsgChild.appendChild(createP);
       contentIncomeMsgChild.appendChild(createSpan);
@@ -356,7 +377,7 @@ function createMsgIncomeQuestion(nameTag_ = null, tyle_ = null, class_ = null, i
       $(contentIncomeImg).addClass("received-chats-img");
 
       var createImg = document.createElement("img");
-      $(createImg).attr("src","img/v1.png");
+      $(createImg).attr("src","img/bot.gif");
 
       contentIncomeImg.appendChild(createImg);
 
