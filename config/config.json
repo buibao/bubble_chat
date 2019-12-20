@@ -1,16 +1,15 @@
 {
     "socialminer": {
-        "host": "i3-socialminer-1.i3international.com"
+        "host": "hq-socialminer.abc.inc"
     },
 
     "chat": {
-        "feedid": "100022",
+        "feedid": "100040",
         "author": "Web Guest",
         "tags" : "i3_chat",
-        "ccx_csq_id" : 1,
+        "ccx_csq_id" : 0,
         "title": "New visitor on web page",
-        "pollingInterval": 5000,
-        "headers": "*"
+        "pollingInterval": 5000
     },
 
     "popup": {

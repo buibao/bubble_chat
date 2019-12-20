@@ -78,24 +78,24 @@ function initiateChatToSocialMiner() {
     console.log("Initiating chat request to SocialMiner " + config.socialminer.host);
    
     restUtil.postChatRequest().done(function(data, textStatus, jqXHR) {
-            // update session
+            // // update session
             session.scRefURL = jqXHR.getResponseHeader(constants.locationHeader);
             session.latestEventID = 0;
             session.launched = false;
+            console.log("data :",data);
+            console.log("jqXHR :",jqXHR);
             console.log("Injection of chat successful. SC RefURL = " + session.scRefURL);
-            // if (!session.launched) {
-            //     // chatbox_ui.launch();    
-            //     session.launched = true;
-            // }
             // start polling for chat events from SocialMiner
             session.pollerID = setInterval(pollForChatEvents, config.chat.pollingInterval);
+            console.log("textStatus :",textStatus);
             createMsgIncome("Please watting Customer Care join to chat room.","Bot");
-        }) 
+        })
         .fail(function(jqXHR, textStatus) {
           console.log("jqXHR :",jqXHR);
           console.log("textStatus :",textStatus);
-          console.error('Failed to initiate chat request! Response status = ' + jqXHR.status);
           session.startChat = undefined;//session.startChat = undefined;
+          console.error('Failed to initiate chat request! Response status = ' + jqXHR.status);
+          // session.pollerID = setInterval(pollForChatEvents, config.chat.pollingInterval);
         });
 }
 
@@ -123,8 +123,6 @@ function pollForChatEvents() {
                 console.log('Received chat events: ' + JSON.stringify(chatEvents));
                 // process message events
                 if (chatEvents && chatEvents.MessageEvent) {
-                    
-                   
                     //processGetTranScript();
                     processIncomingMessages(chatEvents.MessageEvent);
                     // Create/Update message
@@ -138,6 +136,9 @@ function pollForChatEvents() {
                     }
                     processEndChat(chatEvents.PresenceEvent);
                 }
+                // if(chatEvents && chatEvents.StatusEvent){
+                //     if()
+                // }
                
               
             }) // When end of Chat inactivity timeout - config from CCX
@@ -320,7 +321,7 @@ function createMsgOut(messages,current_time = null){
 
       contentOut.appendChild(contentOutChild);
 
-      $(contentOut).appendTo( ".msg-page" );
+      $(contentOut).appendTo(".msg-page");
 
       var element = document.getElementById("messagesBody");
       element.scrollTop = element.scrollHeight;
