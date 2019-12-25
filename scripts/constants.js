@@ -22,7 +22,7 @@
 // Defines global constants
 
 var constants = {
-    scheme              : 'http://',
+    scheme              : 'https://',
     feedRefURL          : '/ccp-webapp/ccp/feed/',
     chatURI             : '/ccp/chat',
     chatEventsPathParam : '?all=false&eventid=',

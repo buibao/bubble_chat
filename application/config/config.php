@@ -23,7 +23,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-$config['base_url'] = 'https://6231dd0e.ngrok.io/bubble_chat';
+$config['base_url'] = 'https://localhost/bubble_chat';
 
 /*
 |--------------------------------------------------------------------------

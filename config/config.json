@@ -2,7 +2,6 @@
     "socialminer": {
         "host": "hq-socialminer.abc.inc"
     },
-
     "chat": {
         "feedid": "100040",
         "author": "Web Guest",
@@ -28,5 +27,8 @@
     "message_type":{
         "bot":"Bot",
         "agent":"Agent"
-    }
+	},
+	"apiUrl":{
+		"baseUrl":"https://localhost/bubble_chat/index.php/welcome"
+	}
 }
