@@ -250,7 +250,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 				  CURLOPT_TIMEOUT => 0,
 				  CURLOPT_FOLLOWLOCATION => true,
 				  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-				  CURLOPT_CUSTOMREQUEST => "DELETE",
+				  CURLOPT_CUSTOMREQUEST => "PUT",
 				  // CURLOPT_POSTFIELDS =>"<Message><body>".$message. "</body></Message>",
 			      CURLOPT_HTTPHEADER => array(
 				"Content-Type: application/xml",
