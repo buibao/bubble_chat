@@ -118,6 +118,7 @@ function pollForChatEvents() {
             .done(function(data, textStatus, jqXHR) {
                 // parse the XML response
                  console.log('textStatus: ',textStatus);
+                 console.log('data: ',data);
                  console.log('jqXHR: ',jqXHR);
                 var chatEvents = $.xml2json(data);
                 console.log('Received chat events: ' + JSON.stringify(chatEvents));
@@ -152,28 +153,28 @@ function pollForChatEvents() {
 function processGetTranScript(){
                    // Get data TranscriptXml
                 var dataTranscriptXml = restUtil.getTranscriptDownloadUrl();
-                var dataJson = "";
-                $.ajax({
-                          type: "GET",
-                          url: dataTranscriptXml,
-                          dataType: "xml",
-                          crossDomain : true,
-                          xhrFields   : { withCredentials: true }, // Required to share session cookie while making cross-domain requests
-                          success: function(xml) {
-                           // console.log("xml :",xml.documentElement.outerHTML);
-                           // covnert xml to json
-                            // console.log(xml.documentElement.outerHTML);
-                             var dataTranscriptJson = $.xml2json(xml.documentElement.outerHTML);
-                             var dataJsonp = JSON.stringify(dataTranscriptJson);
-                            // console.log("history: ",dataJsonp);
-                             if (dataJsonp != "" && dataJsonp != null) {
-                               setCookie(dataJsonp);
-                             }
-                          },
-                          error: function(xhrReq, textStatus, errorThrown) {
-                             dataCookie = "";
-                          }
-                   });
+                // var dataJson = "";
+                // $.ajax({
+                //           type: "GET",
+                //           url: dataTranscriptXml,
+                //           dataType: "xml",
+                //           crossDomain : true,
+                //           xhrFields   : { withCredentials: true }, // Required to share session cookie while making cross-domain requests
+                //           success: function(xml) {
+                //           console.log("xml :",xml);
+                //            // covnert xml to json
+                //             // console.log(xml.documentElement.outerHTML);
+                //              var dataTranscriptJson = $.xml2json(xml.documentElement.outerHTML);
+                //              var dataJsonp = JSON.stringify(dataTranscriptJson);
+                //             // console.log("history: ",dataJsonp);
+                //              if (dataJsonp != "" && dataJsonp != null) {
+                //                setCookie(dataJsonp);
+                //              }
+                //           },
+                //           error: function(xhrReq, textStatus, errorThrown) {
+                //              dataCookie = "";
+                //           }
+                //    });
                
 }
 function loadHisotryChat() {

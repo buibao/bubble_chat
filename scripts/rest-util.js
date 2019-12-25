@@ -34,8 +34,9 @@ var restUtil = {
                 'tags': config.chat.tags,
                 'name': (session.name != undefined && NullorEmptyString(session.name) ? session.name : config.chat.author),
                 'ccxqueuetag': 0,
-                'feedRefUrl' : ""
-            };
+                'feedRefUrl' : constants.scheme + config.socialminer.host + constants.feedRefURL + config.chat.feedid,
+                'urlChat' : constants.scheme + config.socialminer.host + constants.chatURI
+          };
 
         console.log('POSTing a chat request to SocialMiner ' + config.socialminer.host);
         //       $.ajaxPrefilter(function(options) {
@@ -45,11 +46,18 @@ var restUtil = {
         //             }
         // }); 
          return $.ajax({
-            type : 'GET',
-            url         : "https://fa8d10f8.ngrok.io/bubble_chat/index.php/welcome/initiate",//constants.scheme + config.socialminer.host + constants.chatURI,
-            contentType: "application/xml",
-            data: dataSend,
-            crossDomain : true,
+            type : 'POST',
+            url         : "https://6231dd0e.ngrok.io/bubble_chat/index.php/welcome/createChat?urlChat="+ dataSend.urlChat +"&author="+ dataSend.author + "&title=" + dataSend.title + "&tags=" +dataSend.tags + "&name=" + dataSend.name + "&ccxqueuetag=" +dataSend.ccxqueuetag + "&feedRefUrl=" + dataSend.feedRefUrl,//constants.scheme + config.socialminer.host + constants.chatURI,
+            // contentType: "application/json",
+            // data: {
+            //     'author': (session.name != undefined && NullorEmptyString(session.name) ? session.name : config.chat.author),
+            //     'title' : config.chat.title,
+            //     'tags': config.chat.tags,
+            //     'name': (session.name != undefined && NullorEmptyString(session.name) ? session.name : config.chat.author),
+            //     'ccxqueuetag': 0,
+            //     'feedRefUrl' : ""
+            // },
+            // crossDomain : true,
             header:{
               'Access-Control-Allow-Origin': '*',
               'Access-Control-Allow-Methods': 'PUT, POST, GET, DELETE, OPTIONS',
@@ -59,7 +67,7 @@ var restUtil = {
             // rejectUnauthorized: false,
             // contentType : constants.xmlMIMEType,
             // data        : constructPostPayload(),
-             xhrFields   : { withCredentials : true } // Required to share session cookie while making cross-domain requests
+            // xhrFields   : { withCredentials : true } // Required to share session cookie while making cross-domain requests
             // credentials : 'include',
     
 
@@ -67,6 +75,9 @@ var restUtil = {
     },
 
     getChatEvents : function (eventID) {
+       var dataSend = {
+                'urlChat' : constants.scheme + config.socialminer.host + constants.chatURI
+        };
         console.log('GETting chat events from SocialMiner ' + config.socialminer.host + ' since eventID ' + eventID);
         //   $.ajaxPrefilter(function(options) {
         //         if (options.crossDomain && jQuery.support.cors) {
@@ -75,7 +86,7 @@ var restUtil = {
         //             }
         // }); 
         return $.get({
-            url         : "https://fa8d10f8.ngrok.io/phpserver/index.php/welcome/polling?lastEventId=" + eventID,//constants.scheme + config.socialminer.host + constants.chatURI + constants.chatEventsPathParam + eventID,
+            url         : "https://6231dd0e.ngrok.io/bubble_chat/index.php/welcome/polling?urlChat=" + dataSend.urlChat + "&eventID="+eventID,//constants.scheme + config.socialminer.host + constants.chatURI + constants.chatEventsPathParam + eventID,
            // xhrFields   : { withCredentials: true },  // Required to share session cookie while making cross-domain requests
              // header:{
              //  'Access-Control-Allow-Origin': '*',
@@ -96,27 +107,31 @@ var restUtil = {
         //             options.url = 'https://cors-anywhere.herokuapp.com/' + options.url;
         //             }
         // }); 
+        var dataSend = {
+                'message' : message,
+                'urlChat' : constants.scheme + config.socialminer.host + constants.chatURI
+        };
         return $.ajax({
             type        : 'PUT',
-            url         : constants.scheme + config.socialminer.host + constants.chatURI,
+            url         : "https://6231dd0e.ngrok.io/bubble_chat/index.php/welcome/putChatMessage?urlChat="+dataSend.urlChat+"&message="+dataSend.message,// constants.scheme + config.socialminer.host + constants.chatURI,
                header:{
               'Access-Control-Allow-Origin': '*',
               'Access-Control-Allow-Methods': 'PUT, POST, GET, DELETE, OPTIONS',
               'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept'
 
                      },
-            data        : constructMessagePayload(message),
-            contentType : constants.xmlMIMEType,
-            rejectUnauthorized: false,
+            // data        : constructMessagePayload(message),
+            // contentType : constants.xmlMIMEType,
+            // rejectUnauthorized: false,
             // crossDomain : true,
-           // xhrFields   : { withCredentials: true },  // Required to share session cookie while making cross-domain requests
+            // xhrFields   : { withCredentials: true },  // Required to share session cookie while making cross-domain requests
             // header: {
             //             'Access-Control-Allow-Origin':'*',
             //             'Access-Control-Allow-Headers':'*',
             //             'Access-Control-Allow-Methods':'POST, GET, OPTIONS, PUT'
             //     },
             success: function(xml) {
-                        checkCookie();
+                        // checkCookie();
             }
         });
     },
@@ -147,9 +162,37 @@ var restUtil = {
      getTranscriptDownloadUrl: function()
         {
             // A locale can be specified with the 'locale' parameter.
-        return  constants.scheme + config.socialminer.host + constants.chatURI + "/transcript.xml";//"/transcript.pdf?locale=en_ALL";
-     }
+        // return  constants.scheme + config.socialminer.host + constants.chatURI + "/transcript.xml";//"/transcript.pdf?locale=en_ALL";
+        var dataSend = {
+                'urlChat' : constants.scheme + config.socialminer.host + constants.chatURI + "/transcript.xml"
+        };
+        return  $.ajax({
+            type        : 'GET',
+            url         : "https://6231dd0e.ngrok.io/bubble_chat/index.php/welcome/getTranscript?urlChat=" + dataSend.urlChat,
+            // crossDomain : true,
+            // xhrFields   : { withCredentials: true },  // Required to share session cookie while making cross-domain requests
+            header:{
+              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Methods': 'PUT, POST, GET, DELETE, OPTIONS',
+              'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept'
 
+            },
+            success: function(xml) {
+                          console.log("xmllllllllllllllllllll :",xml);
+                           // covnert xml to json
+                            // console.log(xml.documentElement.outerHTML);
+                             var dataTranscriptJson = $.xml2json(xml);
+                             var dataJsonp = JSON.stringify(dataTranscriptJson);
+                            // console.log("history: ",dataJsonp);
+                             if (dataJsonp != "" && dataJsonp != null) {
+                               setCookie(dataJsonp);
+                             }
+                          },
+                          error: function(xhrReq, textStatus, errorThrown) {
+                           console("xhrReq:",xhrReq);
+            }
+        });
+    },
 };
 
 function constructPostPayload () {
