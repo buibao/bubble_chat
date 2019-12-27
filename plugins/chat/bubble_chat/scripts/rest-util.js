@@ -70,7 +70,7 @@ var restUtil = {
     },
 
     getChatEvents : function (eventID) {
-       var dataSend = {
+        var dataSend = {
                 'urlChat' : constants.scheme + config.socialminer.host + constants.chatURI
         };
         console.log('GETting chat events from SocialMiner ' + config.socialminer.host + ' since eventID ' + eventID);
@@ -119,14 +119,14 @@ var restUtil = {
             }
         });
     },
-	leaveChat : function () {
+    leaveChat : function () {
         console.log('DELETEing chat session with SocialMiner ' + config.socialminer.host);
-		var dataSend = {
-			'urlChat' : constants.scheme + config.socialminer.host + constants.chatURI + "/leaveChat"
-		};
+        var dataSend = {
+            'urlChat' : constants.scheme + config.socialminer.host + constants.chatURI + "/leaveChat"
+        };
         return $.ajax({
             type        : 'PUT',
-			url         : config.apiUrl.baseUrl + "/leaveChat?urlChat=" + dataSend.urlChat,
+            url         : config.apiUrl.baseUrl + "/leaveChat?urlChat=" + dataSend.urlChat,
             // crossDomain : true,
             // xhrFields   : { withCredentials: true },  // Required to share session cookie while making cross-domain requests
             header:{
@@ -140,12 +140,12 @@ var restUtil = {
     },
     deleteChat : function () {
         console.log('DELETEing chat session with SocialMiner ' + config.socialminer.host);
-		var dataSend = {
-			'urlChat' : constants.scheme + config.socialminer.host + constants.chatURI
-		};
+        var dataSend = {
+            'urlChat' : constants.scheme + config.socialminer.host + constants.chatURI
+        };
         return $.ajax({
             type        : 'DELETE',
-			url         : config.apiUrl.baseUrl + "/deleteChat?urlChat=" + dataSend.urlChat,
+            url         : config.apiUrl.baseUrl + "/deleteChat?urlChat=" + dataSend.urlChat,
             // crossDomain : true,
             // xhrFields   : { withCredentials: true },  // Required to share session cookie while making cross-domain requests
               header:{
