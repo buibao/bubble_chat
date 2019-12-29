@@ -27,10 +27,8 @@ var session = {};
  */
 $(document).ready(function() {
 
-    loadConfig();
-    // auto-initiate a chat to SocialMiner after a fixed duration
-    loadHisotryChat();
-
+	loadConfig();
+	loadHisotryChat();
 });
 
 /**
@@ -50,7 +48,11 @@ function loadConfig() {
         }
     });
 }
-
+function loadSessionChat(){
+	  session.checkSession = false;
+	  // Func from UI
+      startPolling();
+}
 // function StartChat() {
 //     console.log("Start Chat");
 

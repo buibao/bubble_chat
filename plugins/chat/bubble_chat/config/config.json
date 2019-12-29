@@ -1,9 +1,9 @@
 {
     "socialminer": {
-        "host": "i3-socialminer-1.i3international.com"
+        "host": "hq-socialminer.abc.inc"
     },
     "chat": {
-        "feedid": "100024",
+        "feedid": "100040",
         "author": "Web Guest",
         "tags" : "i3_chat",
         "ccx_csq_id" : 0,

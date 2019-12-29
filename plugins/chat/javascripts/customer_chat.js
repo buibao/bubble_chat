@@ -54,9 +54,25 @@ socialminer.chat = function()
                 lastEventId = eventId;
             }
         }
-
+        if(lastEventId == 0 && session.checkSession  == false && events.length == 0){
+            go = false;
+            if ( pollHandle != null )
+            {
+                clearTimeout(pollHandle);
+                pollHandle = null;
+			}
+			session.checkSession  == undefined;
+        }
         notify(events);
     },
+    // createChooseTeam = function()
+    // {
+    // $("#messagesBody").append('<div class="s2-received-chats choose-team"><div class="s2-received-chats-img"><img src="'+urlImage+config.bot.img+'"></div><div class="s2-received-msg"><div class="s2-received-msg-inbox"><p>To point you in the right direction, what i3 team were you hoping to speak with today?</p><span class="time">'+getCurrentTime()+'</span><div class="t-options" style="margin-bottom:3%"><button class="options ops-1 ccx_csq_sales" id="ccx_csq_sales" name="ccx_csq_sales" value ='+ config.teamOptions.i3Sales +' >i3 Sales</button><button class="options ops-2 ccx_csq_support" name="ccx_csq_support" id="ccx_csq_support" value='+ config.teamOptions.i3Supports +' >i3 Support</button></div></div></div></div>');
+    // loadElement();
+    // var element = document.getElementById("messagesBody");
+    // element.scrollTop = element.scrollHeight;
+
+    // },
 
     /**
      * Notify all event listeners of the given set of events.
@@ -279,7 +295,7 @@ socialminer.chat = function()
                                  }
                               },
                               error: function(xhrReq, textStatus, errorThrown) {
-                               console("xhrReq:",xhrReq);
+                               console.log("xhrReq:",xhrReq);
                 }
             });
         },

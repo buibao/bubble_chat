@@ -150,7 +150,7 @@
                 updateWaitMessageTimeoutHandle = null;
             }
 
-            var i, endChat;
+						var i, endChat;
             for (i = 0; i < events.length; i++) {
                 socialminer.utils.log("Processing event" + JSON.stringify(events[i]));
 
@@ -276,8 +276,14 @@
                     // $(".choose-team").remove();
                     // createMsgIncomeQuestion("button", "button", "btn btn-default", "btn_start", "", "", "", "Start chat", 'initiateChat()');
                     }
-                    CreateChooseTeam();
-                   
+										CreateChooseTeam();                  
+                
+                  //  console.log("session.PresentSession: ",session.PresentSession);
+                  //  console.log("DONE X");
+                  //  if(session.PresentSession == false){
+                  //    CreateChooseTeam();
+                  //    session.PresentSession = "End";
+                  //  }
                     break;
 
                 case CHAT_UI_STATES.WAITING_FOR_AGENT:
@@ -289,6 +295,9 @@
                     }
                     if(($(".info").length > 0)){
                         $(".info").remove();
+										}
+										if (($(".choose-team").length > 0)){
+                    $(".choose-team").remove();
                     }
                     break;
 
@@ -405,7 +414,8 @@
 
 </head>
 
-<body style="background-color: transparent;">
+<body style="background-color: transparent;" onload="loadSessionChat();">
+<button onClick="startPolling()">Start Polling</button>
     <div>
         <div class="box-conversation" style="display: block;" id="conversation">
             <div class="box-header">
@@ -568,19 +578,17 @@
                    function loadElement(){
                     var lengthSales = document.getElementsByClassName('ccx_csq_sales').length;
                     var lengthSupports = document.getElementsByClassName('ccx_csq_support').length;
-                    // console.log("length: ", lengthSales-1);
-                    document.getElementsByClassName('ccx_csq_sales')[lengthSales-1].addEventListener('click',function () {
-                      session.ccxqueuetag = this.value;
-                      userChoose('ccx_csq_sales');
-                      // console.log(ccx_csq_sales);
-                    });
-                    document.getElementsByClassName('ccx_csq_support')[lengthSupports-1].addEventListener('click',function () {
-                      session.ccxqueuetag = this.value;
-                      // console.log("length: ", lengthSupports-1);
-                      userChoose('ccx_csq_support');
-                      // console.log('ccx_csq_support');
-
-                    });
+                    if(lengthSales > 0 && lengthSupports > 0){
+                         document.getElementsByClassName('ccx_csq_sales')[lengthSales-1].addEventListener('click',function () {
+                          session.ccxqueuetag = this.value;
+                          userChoose('ccx_csq_sales');
+                        });
+                        document.getElementsByClassName('ccx_csq_support')[lengthSupports-1].addEventListener('click',function () {
+                          session.ccxqueuetag = this.value;
+                          userChoose('ccx_csq_support');
+                        });
+                    }
+                 
                   }
                    function on_off() {
                   
