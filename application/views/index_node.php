@@ -188,14 +188,12 @@
         function initiateChat() {
             socialMinerChat = new socialminer.chat();
             socialMinerChat.init(window.location.protocol + "//" + window.location.host, constants.scheme + config.socialminer.host + constants.feedRefURL + config.chat.feedid);
-            //window.location.protocol + "//" + window.location.host
-            // i3-socialminer-1.i3international.com
-            // hq-socialminer.abc.inc
              agentName = null;
              contact = {};
              messageCount = 0;
              updateWaitMessageTimeoutHandle = null;
              lastTypingEvent = null;
+            //  clientHisChat = [];
 
             // Get Info
             getInfo();
@@ -245,26 +243,13 @@
         }
        function processGetCookie() {
             // Get data TranscriptXml
-            var dataTranscriptXml =  socialMinerChat.getTranscriptCookieUrl();
-            // var dataJson = "";
-            // $.ajax({
-            //     type: "GET",
-            //     url: dataTranscriptXml,
-            //     contentType: "application/xml",
-            //     success: function(xml) {
-            //         var dataTranscriptJson = $.xml2json(xml.documentElement.outerHTML);
-            //         var dataJsonp = JSON.stringify(dataTranscriptJson);
-            //         if (dataJsonp != "" && dataJsonp != null) {
-            //             setCookie(dataJsonp);
-            //         }
-            //     },
-            //     error: function(xhrReq, textStatus, errorThrown) {
-            //         dataCookie = "";
-            //     }
-            // });
+            socialMinerChat.getTranscriptCookieUrl();
+       }
+       function deleteSession(){
 
-        }
+         socialMinerChat.delete();
 
+       }
         function setUiState(state) {
             switch (state) {
                 case CHAT_UI_STATES.ENTERING_INFO:
@@ -391,6 +376,7 @@
                                     from: "me",
                                     body: message
                                 });
+                                socialMinerChat.pushHisclient([{from : "Client", body : message, lastEventID : socialMinerChat.lastEventID() + 1 }]);
                                 socialminer.utils.log("send success");
                             },
                             function() {
@@ -414,7 +400,7 @@
 
 </head>
 
-<body style="background-color: transparent;" onload="loadSessionChat();">
+<body style="background-color: transparent;" onload="loadSessionChat()">
 <button onClick="startPolling()">Start Polling</button>
     <div>
         <div class="box-conversation" style="display: block;" id="conversation">

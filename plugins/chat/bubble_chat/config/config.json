@@ -19,6 +19,9 @@
         "name"  :"i3_chat_history",
         "exdays":30
     },
+    "localStorage":{
+        "name"  :"HistoryClientChat"
+    },
     "bot":{
         "welcome_back": "Welcome back ",
         "welcome" : "Welcome to i3 international.",

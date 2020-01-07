@@ -151,36 +151,25 @@ function getInfo() {
 
 function processGetTranScript() {
     // Get data TranscriptXml
-    var dataTranscriptXml =  socialminer.getTranscriptCookieUrl();
-    // var dataJson = "";
-    // $.ajax({
-    //     type: "GET",
-    //     url: dataTranscriptXml,
-    //     dataType: "xml",
-    //     crossDomain: true,
-    //     xhrFields: { withCredentials: true }, // Required to share session cookie while making cross-domain requests
-    //     success: function(xml) {
-    //         // console.log("xml :",xml.documentElement.outerHTML);
-    //         // covnert xml to json
-    //         // console.log(xml.documentElement.outerHTML);
-    //         var dataTranscriptJson = $.xml2json(xml.documentElement.outerHTML);
-    //         var dataJsonp = JSON.stringify(dataTranscriptJson);
-
-         
-    //         // console.log("dataJsonp: ",dataJsonp);
-    //         // console.log("history: ",dataJsonp);
-    //         // dtHistory.transcript.chat.unshift(...historychat);
-    //         if (dataJsonp != "" && dataJsonp != null) {
-    //             setCookie(dataJsonp);
-    //         }
-    //     },
-    //     error: function(xhrReq, textStatus, errorThrown) {
-    //         dataCookie = "";
-    //     }
-    // });
+  socialminer.getTranscriptCookieUrl();
 
 }
+// function deleteHisClient(){
+//     localStorage.removeItem(config.localStorage.name);
+// }
+// function pushHisclient(message){
 
+//     if(localStorage.getItem(config.localStorage.name) === null){
+//         localStorage.setItem(config.localStorage.name, JSON.stringify(message));     
+//     }else{
+//         var his = [];
+//         var old_his = JSON.parse(localStorage.getItem(config.localStorage.name));
+//         his.push(...old_his);
+//         his.push(...message);
+//         localStorage.setItem(config.localStorage.name, JSON.stringify(his));     
+//     }
+   
+// }
 function loadHisotryChat() {
     // check exists history chat
 
@@ -188,10 +177,6 @@ function loadHisotryChat() {
         var dtHistory = JSON.parse($.cookie(config.cookie.name));
         // console.log(dtHistory);
        
-        // dataJsonp.transcript.chat.unshift();
-        // dtHistory.transcript.chat.unshift(...historychat);
-        // dtHistory.transcript.chat.unshift({time: "1577159200437", name: "Agent", msg: "1"})
-        // console.log(dtHistory);
         // Start Load history
         
         // Get the size of an object
@@ -355,15 +340,22 @@ function setCookie(cvalue) {
         var resChat = [];
         var dtHistory = JSON.parse($.cookie(config.cookie.name));
         var value = JSON.parse(cvalue);
-        if (dtHistory.transcript.chat != undefined) {
+        if (dtHistory.transcript != undefined && dtHistory.transcript.chat != undefined) {
             var historychat = dtHistory.transcript.chat;
             Array.isArray(historychat) ?  resChat.push(...historychat) :  resChat.push(historychat);
+            console.log("Run dtHistory");
+
+        }
+        if(value.transcript != undefined && value.transcript.chat != undefined){
             Array.isArray(value.transcript.chat) ?  resChat.push(...value.transcript.chat) :  resChat.push(value.transcript.chat);
+            console.log("Run value");
         }
         value.transcript.chat = resChat;
         cvalue = JSON.stringify(value);
     }
     $.cookie(cname, cvalue);
+    // from view
+    deleteSession();
 }
 
 function getCookie(cname) {

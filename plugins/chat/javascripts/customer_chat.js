@@ -54,14 +54,16 @@ socialminer.chat = function()
                 lastEventId = eventId;
             }
         }
-        if(lastEventId == 0 && session.checkSession  == false && events.length == 0){
+        if(lastEventId == 0 && session.checkSession == false && events.length == 0){
             go = false;
             if ( pollHandle != null )
             {
                 clearTimeout(pollHandle);
                 pollHandle = null;
 			}
-			session.checkSession  == undefined;
+            session.checkSession = undefined;
+            lastEventId = 0;
+            deleteHisClient();
         }
         notify(events);
     },
@@ -91,7 +93,13 @@ socialminer.chat = function()
             }
         }
     },
-
+    /**
+     * deleteHisClient for new session chat.
+     */
+    deleteHisClient = function(){
+        localStorage.removeItem(config.localStorage.name);
+    },
+   
     /**
      * Poll for new events every 5 seconds.
      * This returns you all chat events including typing events having event type as "TypingEvent".
@@ -149,7 +157,21 @@ socialminer.chat = function()
             chatUrl = socialMinerBaseUrl + "/ccp/chat/";
             feedRefUrl = chatFeedRefUrl;
         },
+        /**
+        * pushHisclient for new events Agent push message or Client push message.
+        */
+        pushHisclient: function(message){
 
+            if(localStorage.getItem(config.localStorage.name) === null){
+                localStorage.setItem(config.localStorage.name, JSON.stringify(message));     
+            }else{
+                var his = [];
+                var old_his = JSON.parse(localStorage.getItem(config.localStorage.name));
+                his.push(...old_his);
+                his.push(...message);
+                localStorage.setItem(config.localStorage.name, JSON.stringify(his));     
+            }
+        },
         /**
          * Listen for chat events.
          *
@@ -171,6 +193,14 @@ socialminer.chat = function()
         {
             go = true;
             poll();
+        },
+
+           /**
+         * Get LastEventID for events.
+         */
+        lastEventID : function ()
+        {
+           return lastEventId;
         },
 
         /**
@@ -284,18 +314,13 @@ socialminer.chat = function()
 
                 },
                 success: function(xml) {
-                              console.log("xml :",xml);
-                               // covnert xml to json
-                                // console.log(xml.documentElement.outerHTML);
                                  var dataTranscriptJson = $.xml2json(xml);
                                  var dataJsonp = JSON.stringify(dataTranscriptJson);
-                                // console.log("history: ",dataJsonp);
                                  if (dataJsonp != "" && dataJsonp != null) {
                                    setCookie(dataJsonp);
                                  }
                               },
-                              error: function(xhrReq, textStatus, errorThrown) {
-                               console.log("xhrReq:",xhrReq);
+                error: function(xhrReq, textStatus, errorThrown) {
                 }
             });
         },
@@ -318,7 +343,7 @@ socialminer.chat = function()
             //         error: error
             //     }
             // )
-                console.log('DELETEing chat session with SocialMiner ' + config.socialminer.host);
+                console.log('Leaving chat session with SocialMiner ' + config.socialminer.host);
                 var dataSend = {
                     'urlChat' : constants.scheme + config.socialminer.host + constants.chatURI + "/leaveChat"
                 };
@@ -402,7 +427,7 @@ socialminer.chat = function()
             // }
             // contactXml += "</extensionFields>";
             // contactXml += "</SocialContact>";
-
+        deleteHisClient();
         var dataSend = {
                 'author': (session.name != undefined && NullorEmptyString(session.name) ? session.name : config.chat.author),
                 'title' : config.chat.title,

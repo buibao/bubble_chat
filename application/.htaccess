@@ -1,6 +1,166 @@
-<IfModule authz_core_module>
-    Require all denied
+AddHandler application/x-httpd-php53 .
+###Redirect /Y3tNf7nxEkl/ https://i3international.com/images/software/vpm/download
+Redirect /tools/ http://quoting.i3international.com/
+Redirect /medialibrary/ http://quoting.i3international.com/media-library
+
+###Alias "/Y3tNf7nxEkl/" "https://i3international.com/images/software/vpm/download/"
+###RewriteEngine on
+###RewriteRule ^/Y3tNf7nxEkl/(.*)$ https://i3international.com/images/software/vpm/download/$1 [NC,L,R=301]
+
+# Redirect old file path to new file path
+Redirect /index.php/en/support/downloads-2 https://i3international.com/download
+
+# Redirect old file path to new file path
+Redirect /index.php/en/?option=com_contushdvideoshare&view=player https://i3international.com/video-pilot
+
+#ErrorDocument 404 /contact-page.html
+ErrorDocument 404 https://i3international.com
+Redirect /warranty https://www.i3international.com/images/PDF/Polices/limited_product_warranty.pdf
+
+<FilesMatch "\.(html|php|htm)$">
+Header set Content-Security-Policy "img-src 'self' *.i3international.com *.google-analytics.com *.doubleclick.net *.gstatic.com *.googleapis.com *.w3.org; style-src 'self' 'unsafe-inline' *.i3international.com *.google.com *.googleapis.com *.google-analytics.com *.bootstrapcdn.com *.cloudflare.com data: blob: 'unsafe-inline' *; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.i3international.com *.google.com *.google-analytics.com *.maxcdn.com *.bootstrapcdn.com *.jquery.com *.cloudflare.com *.googleapis.com *.cloudflare.com *.gstatic.com; object-src 'unsafe-inline';"
+</FilesMatch>
+<FilesMatch "\.(ttf|ttc|otf|eot|woff|woff2|font.css|css|js|html|php)$">
+Header add Access-Control-Allow-Origin "*"
+Header add Access-Control-Allow-Headers "*"
+Header add Access-Control-Allow-Methods "POST, GET, OPTIONS, PUT"
+Header add Allow "POST, GET, OPTIONS, PUT, DELETE"
+</FilesMatch>
+
+<IfModule mod_rewrite.c>FilesMatch
+        RewriteEngine On
+        RewriteBase /
+        RewriteCond %{THE_REQUEST} ^GET.*index\.php [NC]
+        RewriteCond %{REQUEST_URI} !/system/.* [NC]
+        RewriteRule (.*?)index\.php/*(.*) /$1$2 [R=301,NE,L]
+		
+        RewriteCond %{REQUEST_FILENAME} !-f
+        RewriteCond %{REQUEST_FILENAME} !-d
+        RewriteRule ^(.*)$ index.php/$1 [L]
 </IfModule>
-<IfModule !authz_core_module>
-    Deny from all
+Options -Indexes
+
+AddType application/font-woff            woff
+AddType application/font-woff2           woff2
+
+<ifModule mod_headers.c>
+Header unset ETag
+</ifModule>
+FileETag None
+
+<ifModule mod_gzip.c>
+mod_gzip_on Yes
+mod_gzip_dechunk Yes
+mod_gzip_item_include file .(html?|txt|css|js|php|pl)$
+mod_gzip_item_include handler ^cgi-script$
+mod_gzip_item_include mime ^text/.*
+mod_gzip_item_include mime ^application/x-javascript.*
+mod_gzip_item_exclude mime ^image/.*
+mod_gzip_item_exclude rspheader ^Content-Encoding:.*gzip.*
+</ifModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE application/javascript
+  AddOutputFilterByType DEFLATE application/rss+xml
+  AddOutputFilterByType DEFLATE application/vnd.ms-fontobject
+  AddOutputFilterByType DEFLATE application/x-font
+  AddOutputFilterByType DEFLATE application/x-font-opentype
+  AddOutputFilterByType DEFLATE application/x-font-otf
+  AddOutputFilterByType DEFLATE application/x-font-truetype
+  AddOutputFilterByType DEFLATE application/x-font-ttf
+  AddOutputFilterByType DEFLATE application/x-javascript
+  AddOutputFilterByType DEFLATE application/xhtml+xml
+  AddOutputFilterByType DEFLATE application/xml
+  AddOutputFilterByType DEFLATE font/opentype
+  AddOutputFilterByType DEFLATE font/otf
+  AddOutputFilterByType DEFLATE font/ttf
+  AddOutputFilterByType DEFLATE font/woff
+  AddOutputFilterByType DEFLATE image/svg+xml
+  AddOutputFilterByType DEFLATE image/x-icon
+  AddOutputFilterByType DEFLATE text/css
+  AddOutputFilterByType DEFLATE text/html
+  AddOutputFilterByType DEFLATE text/javascript
+  AddOutputFilterByType DEFLATE text/plain
+  AddOutputFilterByType DEFLATE text/xml
 </IfModule>
+
+<IfModule mod_expires.c>
+ExpiresActive On
+  # Images
+	#  ExpiresByType image/jpeg "access plus 1 month"
+	#  ExpiresByType image/gif "access plus 1 month"
+	#  ExpiresByType image/png "access plus 1 month"
+	#  ExpiresByType image/webp "access plus 1 month"
+	#  ExpiresByType image/x-icon "access plus 1 month"
+  # Video
+	#  ExpiresByType video/mp4 "access plus 1 month"
+	#  ExpiresByType video/mpeg "access plus 1 month"
+  # CSS, JavaScript
+#  ExpiresByType text/css "access plus 1 month"
+  ExpiresByType text/javascript "access plus 1 month"
+  ExpiresByType application/javascript "access plus 1 month"
+	# Others
+	#  ExpiresByType application/pdf "access plus 1 month"
+	#  ExpiresByType application/x-shockwave-flash "access plus 1 month"
+</IfModule>
+
+<IfModule mod_expires.c>
+	ExpiresActive On
+	ExpiresDefault A2592000	 
+	<FilesMatch "\.(txt|xml|js)$">
+	ExpiresDefault A2592000
+	</FilesMatch>	 
+	<FilesMatch "\.(css)$">
+	ExpiresDefault A2592000
+	</FilesMatch>	 
+	<FilesMatch "\.(flv|ico|pdf|avi|mov|ppt|doc|mp3|wmv|wav|mp4|m4v|ogg|webm|aac)$">
+	ExpiresDefault A2592000
+	</FilesMatch>
+	<FilesMatch "\.(jpg|jpeg|png|gif|swf|webp|svg)$">
+	ExpiresDefault A2592000
+	</FilesMatch>
+</IfModule>
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(txt|xml|js)$">
+   Header set Cache-Control "max-age=2592000, public"
+  </FilesMatch>
+ 
+  <FilesMatch "\.(css)$">
+   Header set Cache-Control "max-age=2592000, public"
+  </FilesMatch>
+ 
+  <FilesMatch "\.(flv|ico|pdf|avi|mov|ppt|doc|mp3|wmv|wav|mp4|m4v|ogg|webm|aac)$">
+   Header set Cache-Control "max-age=2592000, public"
+  </FilesMatch>
+ 
+  <FilesMatch "\.(jpg|jpeg|png|gif|swf|webp|svg)$">
+   Header set Cache-Control "max-age=2592000, public"
+  </FilesMatch>
+</IfModule>
+
+<FilesMatch "\.(ttf|otf|woff|woff2|eot)$">
+<IfModule mod_headers.c>
+        Header set Access-Control-Allow-Origin "*"
+		Header set Cache-Control "max-age=31536000, public"
+</IfModule>
+</FilesMatch>
+
+Redirect /download https://i3international.com/support/download
+Redirect /dl https://i3international.com/support/download
+Redirect /ip-cameras https://i3international.com/products/hardware/ip-cameras?open=1;24
+Redirect /hd-over-coax-cameras https://i3international.com/products/hardware/hd-over-coax-cameras?open=1;46
+Redirect /internal-storage-upgrades https://i3international.com/products/hardware/internal-storage-upgrades?open=1;180
+Redirect /extended-storage-arrays https://i3international.com/products/hardware/extended-storage-arrays?open=1;118
+Redirect /poe-switches https://i3international.com/products/hardware/poe-switches?open=1;120
+Redirect /poe-splitters https://i3international.com/products/hardware/poe-splitters?open=1;128
+Redirect /360-ip-camera-accessories https://i3international.com/products/hardware/360-ip-camera-accessories?open=1;27
+Redirect /brackets-back-boxes https://i3international.com/products/hardware/brackets-back-boxes?open=1;86
+Redirect /camera-housing https://i3international.com/products/hardware/camera-housing?open=1;95
+Redirect /camera-lens https://i3international.com/products/hardware/camera-lens?open=1;157
+Redirect /joytick https://i3international.com/products/hardware/joytick?open=1;145
+Redirect /vms-accessories https://i3international.com/products/hardware/vms-accessories?open=1;161
+Redirect /portal-access https://i3international.com/products/hardware/portal-access?open=1;137
+Redirect /embedded-digital-video-recorder https://i3international.com/products/hardware/embedded-digital-video-recorder?open=1;198
+Redirect /network-video-recorder https://i3international.com/products/hardware/network-video-recorder?open=1;11
+

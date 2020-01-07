@@ -27,6 +27,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	{
 		$this->load->view('index_node');
 	}
+	public function phpinfo()
+	{
+		echo phpinfo();
+	}
+	
 	// GET
 	public function createChat(){
 			if(   isset($_GET['author'])
