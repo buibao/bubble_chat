@@ -11,15 +11,15 @@
     <meta name="author" content="Sunny i3">
     <title>Chatbot</title>
     <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"> -->
-     <link href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
     <link rel="stylesheet/less" type="text/css" href="<?php echo base_url() . 'plugins/chat/bubble_chat/less/styles.css';?>" /> 
    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js" type="text/javascript"></script>
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<!-- src="<?php //echo $docs_ssl . 'assets/js/imgMap-css3-animate-trustlogo.js?v=1.2'; ?>"></script> -->
     <script src="<?php echo base_url() . 'plugins/chat/bubble_chat/scripts/3rdparty/jquery-xml2json/jquery.xml2json.js'; ?>" type="text/javascript"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     
@@ -29,16 +29,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/x2js/1.2.0/xml2json.min.js"></script>
     <script src="<?php echo base_url() . 'plugins/chat/bubble_chat/scripts/main.js';?>" type="text/javascript"></script>
     <script src="<?php echo base_url() . 'plugins/chat/bubble_chat/scripts/constants.js';?>" type="text/javascript"></script>
-
-    <!-- <script src="/plugins/chat/bubble_chat/scripts/rest-util.js" type="text/javascript"></script> -->
-
     <script language="JavaScript">
+
         var socialMinerChat = new socialminer.chat();
         // socialMinerChat.init(window.location.protocol + "//" + window.location.host, "https://hq-socialminer.abc.inc/ccp/feed/100040");
-        // //window.location.protocol + "//" + window.location.host
-        // // i3-socialminer-1.i3international.com
-        // // hq-socialminer.abc.inc
-       
         var agentName = null;
         var contact = {};
         var messageCount = 0;
@@ -116,12 +110,6 @@
         function processMessageEvent(event) {
             // var messageId;
             if (!socialminer.utils.isBlank(event.body)) {
-                // messageId = "message" + messageCount++;
-                // $("#messages").append(
-                //     "<a id=\"" + messageId + "\" href=\"#\" class=\"list-group-item\">" +
-                //     "<h5 class=\"list-group-item-heading\">" + event.from + "</h5>" +
-                //     "<p class=\"list-group-item-text\">" + socialminer.utils.trim(event.body) + "</p>" +
-                //     "</a>");
                 // $("#" + messageId)[0].scrollIntoView();
                 // Implement bubble chat
                 if (event.from == "me") {
@@ -226,7 +214,7 @@
                 function(response) {
                     waitMessageUpdateTimeoutHandle = setTimeout(function() {
                         // success("Please be patient while we connect you with a customer care representative.");
-                        createMsgIncome("Please be patient while we connect you with a customer care representative.", "Bot");
+                        // createMsgIncome("Please be patient while we connect you with a customer care representative.", "Bot");
 
                     }, 5000);
 
@@ -261,6 +249,7 @@
                     // $(".choose-team").remove();
                     // createMsgIncomeQuestion("button", "button", "btn btn-default", "btn_start", "", "", "", "Start chat", 'initiateChat()');
                     }
+                   
 										CreateChooseTeam();                  
                 
                   //  console.log("session.PresentSession: ",session.PresentSession);
@@ -376,7 +365,8 @@
                                     from: "me",
                                     body: message
                                 });
-                                socialMinerChat.pushHisclient([{from : "Client", body : message, lastEventID : socialMinerChat.lastEventID() + 1 }]);
+                                // { type: MessageEvent, id: eventId, from: user, body: messageText }
+                                socialMinerChat.pushHisclient([{  id : (socialMinerChat.lastEventID()+1).toString(), body : message, from : "me", type: "MessageEvent" }]);
                                 socialminer.utils.log("send success");
                             },
                             function() {
@@ -397,11 +387,9 @@
             });
         });
     </script>
-
 </head>
-
 <body style="background-color: transparent;" onload="loadSessionChat()">
-<button onClick="startPolling()">Start Polling</button>
+<!-- <button onClick="startPolling()">Start Polling</button> -->
     <div>
         <div class="box-conversation" style="display: block;" id="conversation">
             <div class="box-header">
@@ -516,7 +504,8 @@
             </div>
             </div>
               <a onclick=on_off() class="float ">
-                <i class="fa fa-plus my-float ">
+                <i class="my-float ">
+                <!-- fa fa-plus  -->
                   <img src="<?php echo base_url() . 'plugins/chat/bubble_chat/img/f-comment.svg';?>" alt=" ">
                 </i>
               </a>
@@ -529,16 +518,7 @@
               </script>
               <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js " integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa " crossorigin="anonymous "></script>
               <script src="<?php echo base_url() . 'plugins/chat/bubble_chat/less/less.min.js';?>"></script>
-              <!-- <style>
-              .fade-in-out{
-                   opacity: 1;
-                  -webkit-transition: all 2s ease-in-out;
-                  -moz-transition: all 2s ease-in-out;
-                  -ms-transition: all 2s ease-in-out;
-                  -o-transition: all 2s ease-in-out;
-                  transition: all 2s ease-in-out;
-              }
-              </style> -->
+
               <script>
                 $(document).ready(function () {
                   // var element = document.getElementById("messagesBody");
@@ -579,16 +559,6 @@
                    function on_off() {
                   
                         var y = document.getElementById('conversation');
-
-                    //  if(y.style.display ==='none'){
-                    //   // session.fade = 'box chat';
-                    //    if ($('#box_chat').css('opacity') == 0) $('#box_chat').css('opacity', 1);
-                    //   else $('#box_chat').css('opacity', 0); 
-                    //  }else if(y.style.display ==='block'){
-                    //   // session.fade = 'conversation';
-                    //   if ($('#conversation').css('opacity') == 0) $('#conversation').css('opacity', 1);
-                    //   else $('#conversation').css('opacity', 0); 
-                    //  }
 
                         var x = document.getElementById('box_chat');
                    if (y.style.display ==='none' && x.style.display ==='block') {

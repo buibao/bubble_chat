@@ -57,7 +57,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 					<extensionFields>
 					   <extensionField>
 						  <name>ccxqueuetag</name>
-						  <value>" . $ccxqueuetag  . "</value>
+						  <value>Chat_Csq" . $ccxqueuetag  . "</value>
 					   </extensionField>
 					   <extensionField>
 						  <name>h_Name</name>

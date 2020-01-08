@@ -3,11 +3,11 @@
         "host": "hq-socialminer.abc.inc"
     },
     "chat": {
-        "feedid": "100040",
+        "feedid": "100000",
         "author": "Web Guest",
         "tags" : "i3_chat",
         "ccx_csq_id" : 0,
-        "title": "New visitor on web page",
+        "title": "Test from I3 Chat",
         "pollingInterval": 3000
     },
     "popup": {
@@ -35,8 +35,8 @@
         "parent":"https://localhost/demo"
     },
 	"teamOptions":{
-        "i3Sales" : 0,
-        "i3Supports": 0
+        "i3Sales" : 6,
+        "i3Supports": 10
     },
     "apiUrl":{
         "baseUrl":"https://localhost/bubble_chat/index.php/ChatApi"

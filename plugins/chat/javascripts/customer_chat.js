@@ -64,18 +64,38 @@ socialminer.chat = function()
             session.checkSession = undefined;
             lastEventId = 0;
             deleteHisClient();
+            
         }
+        else if (lastEventId > 0 && session.checkSession == false && events.length > 0 ){
+            
+            session.checkSession = true;
+
+        }
+
         notify(events);
     },
-    // createChooseTeam = function()
-    // {
-    // $("#messagesBody").append('<div class="s2-received-chats choose-team"><div class="s2-received-chats-img"><img src="'+urlImage+config.bot.img+'"></div><div class="s2-received-msg"><div class="s2-received-msg-inbox"><p>To point you in the right direction, what i3 team were you hoping to speak with today?</p><span class="time">'+getCurrentTime()+'</span><div class="t-options" style="margin-bottom:3%"><button class="options ops-1 ccx_csq_sales" id="ccx_csq_sales" name="ccx_csq_sales" value ='+ config.teamOptions.i3Sales +' >i3 Sales</button><button class="options ops-2 ccx_csq_support" name="ccx_csq_support" id="ccx_csq_support" value='+ config.teamOptions.i3Supports +' >i3 Support</button></div></div></div></div>');
-    // loadElement();
-    // var element = document.getElementById("messagesBody");
-    // element.scrollTop = element.scrollHeight;
+    // ================================================================================================
+    // ==================================Start Load History Client Chat================================
+    // ================================================================================================
 
-    // },
+    checkLocalStorage = function(){
 
+        if (getLocalStorage() != null)
+        return  JSON.parse(getLocalStorage());
+        else
+        return null;
+
+    },
+    getLocalStorage = function(){
+
+        var local_his = localStorage.getItem(config.localStorage.name);
+        return local_his === null ? false : local_his;
+        
+    },
+
+    // ================================================================================================
+    // ==================================End Load History Client Chat==================================
+    // ================================================================================================
     /**
      * Notify all event listeners of the given set of events.
      *
@@ -84,13 +104,33 @@ socialminer.chat = function()
     notify = function(events)
     {
         var i;
-        if (events.length > 0)
+        if (events.length > 0) // events from Agent
         {
-            socialminer.utils.log("Events: " + JSON.stringify(events));
-            for (i = 0; i < eventListeners.length; i++)
-            {
-                eventListeners[i](events);
+            console.log("Run A");
+            if ( session.checkSession == undefined ){ // dont have session chat
+                console.log("Run A1");
+
+                socialminer.utils.log("Events: " + JSON.stringify(events));
+                for (i = 0; i < eventListeners.length; i++)
+                {
+                    eventListeners[i](events);
+                }
+
             }
+            else if (session.checkSession == true){ // have session chat
+
+                console.log("Run A2");
+                var client_chats = checkLocalStorage();
+                var res =   events.concat(client_chats).sort((a,b) => (parseInt(a.id) > parseInt(b.id)) ? 1 : ((parseInt(b.id) > parseInt(a.id)) ? -1 : 0)); 
+                socialminer.utils.log("Events: " + JSON.stringify(res));
+                for (i = 0; i < eventListeners.length; i++)
+                {
+                    eventListeners[i](res);
+                }
+                session.checkSession = undefined;
+
+            }
+
         }
     },
     /**
@@ -433,7 +473,7 @@ socialminer.chat = function()
                 'title' : config.chat.title,
                 'tags': config.chat.tags,
                 'name': (session.name != undefined && NullorEmptyString(session.name) ? session.name : config.chat.author),
-                'ccxqueuetag': 0,
+                'ccxqueuetag': session.ccxqueuetag != undefined ? session.ccxqueuetag : 0,
                 'feedRefUrl' : constants.scheme + config.socialminer.host + constants.feedRefURL + config.chat.feedid,
                 'urlChat' : constants.scheme + config.socialminer.host + constants.chatURI
           };

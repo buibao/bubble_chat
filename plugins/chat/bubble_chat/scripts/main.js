@@ -53,12 +53,6 @@ function loadSessionChat(){
 	  // Func from UI
       startPolling();
 }
-// function StartChat() {
-//     console.log("Start Chat");
-
-//     setTimeout(initiateChatToSocialMiner, config.popup.initdelay);
-//     session.startChat = true;
-// }
 
 function getInfo() {
    
@@ -70,113 +64,17 @@ function getInfo() {
     // session.startChat = true;
 }
 
-/**
- * Initiates (POST) a chat request to SocialMiner
- */
-// function initiateChatToSocialMiner() {
-//     console.log("Initiating chat request to SocialMiner " + config.socialminer.host);
-
-//     restUtil.postChatRequest().done(function(data, textStatus, jqXHR) {
-//             // // update session
-//             session.scRefURL = jqXHR.getResponseHeader(constants.locationHeader);
-//             session.latestEventID = 0;
-//             session.launched = false;
-//             console.log("data :", data);
-//             console.log("jqXHR :", jqXHR);
-//             console.log("Injection of chat successful. SC RefURL = " + session.scRefURL);
-//             // start polling for chat events from SocialMiner
-//             session.pollerID = setInterval(pollForChatEvents, config.chat.pollingInterval);
-//             console.log("textStatus :", textStatus);
-//             createMsgIncome("Please watting Customer Care join to chat room.", "Bot");
-//         })
-//         .fail(function(jqXHR, textStatus) {
-//             console.log("jqXHR :", jqXHR);
-//             console.log("textStatus :", textStatus);
-//             session.startChat = undefined; //session.startChat = undefined;
-//             console.error('Failed to initiate chat request! Response status = ' + jqXHR.status);
-//             // session.pollerID = setInterval(pollForChatEvents, config.chat.pollingInterval);
-//         });
-// }
-
-/**
- * Does one poll for chat events from SocialMiner, parses the set of events
- * received and updates the chat accordingly
- */
-// function processGetTranScriptTest() {
-
-//     //.css('display', 'none')
-//     $('<iframe id="downloadFrame">').width(1000).height(250)
-//         .appendTo('body').attr('src', restUtil.getTranscriptDownloadUrl());
-
-// }
-
-// function pollForChatEvents() {
-
-//     console.log('Starting to poll for chat events every ' + config.chat.pollingInterval + ' milliseconds...');
-//     restUtil.getChatEvents(session.latestEventID)
-//         .done(function(data, textStatus, jqXHR) {
-//             // parse the XML response
-//             console.log('textStatus: ', textStatus);
-//             console.log('jqXHR: ', jqXHR);
-//             var chatEvents = $.xml2json(data);
-//             console.log('Received chat events: ' + JSON.stringify(chatEvents));
-//             // process message events
-//             if (chatEvents && chatEvents.MessageEvent) {
-//                 //processGetTranScript();
-//                 processIncomingMessages(chatEvents.MessageEvent);
-//                 // Create/Update message
-//                 checkCookie();
-
-//             }
-//             if (chatEvents && chatEvents.PresenceEvent) {
-//                 if (!session.launched && chatEvents.PresenceEvent.status == "joined") {
-//                     createMsgIncome("Customer Care joined to the chat room.", "Bot");
-//                     session.launched = true;
-//                 }
-//                 processEndChat(chatEvents.PresenceEvent);
-//             }
-//             // if(chatEvents && chatEvents.StatusEvent){
-//             //     if()
-//             // }
-
-
-//         }) // When end of Chat inactivity timeout - config from CCX
-//         .fail(function(messages) {
-//             console.log("Error :", messages.status);
-//             if (messages.status == 404) {
-//                 EndChat("left");
-//             }
-//         })
-// }
-
 function processGetTranScript() {
     // Get data TranscriptXml
   socialminer.getTranscriptCookieUrl();
 
 }
-// function deleteHisClient(){
-//     localStorage.removeItem(config.localStorage.name);
-// }
-// function pushHisclient(message){
 
-//     if(localStorage.getItem(config.localStorage.name) === null){
-//         localStorage.setItem(config.localStorage.name, JSON.stringify(message));     
-//     }else{
-//         var his = [];
-//         var old_his = JSON.parse(localStorage.getItem(config.localStorage.name));
-//         his.push(...old_his);
-//         his.push(...message);
-//         localStorage.setItem(config.localStorage.name, JSON.stringify(his));     
-//     }
-   
-// }
 function loadHisotryChat() {
     // check exists history chat
-
     if (getCookie(config.cookie.name) != undefined) {
         var dtHistory = JSON.parse($.cookie(config.cookie.name));
-        // console.log(dtHistory);
-       
+
         // Start Load history
         
         // Get the size of an object
@@ -232,13 +130,13 @@ function loadHisotryChat() {
 }
 
 function convertTimeStamp(unix_timestamp) {
-    var isIE = (navigator.appName.indexOf("Microsoft") != -1) ? 1 : 0;
+     var isIE = (navigator.appName.indexOf("Microsoft") != -1) ? 1 : 0;
     var yourday = new Date(parseInt(unix_timestamp));
     normalize = (yourday.getTimezoneOffset() / 60) + 2;
     var tmp = new Date(yourday.getTime());
-    // console.log("tmp: ", timeAgo(tmp));
     // return tmp.toLocaleString([], { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
     return timeAgo(tmp);
+    
 }
 
 function getCurrentTime() {
@@ -282,8 +180,11 @@ function getFormattedDate(date, prefomattedDate = false, hideYear = false) {
 
     return `${ hours }:${ minutes }:${ seconds }`;
 
-    }else{
-    return `${ prefomattedDate } at ${ hours }:${ minutes }:${ seconds }`;
+    }
+    else{
+   
+        return `${ prefomattedDate } at ${ hours }:${ minutes }:${ seconds }`;
+   
     }
   }
 
@@ -333,9 +234,11 @@ function timeAgo(dateParam) {
 
 // --------------------------------- End Set Time -------------------------------------------------
 
+
+
 function setCookie(cvalue) {
     var cname = config.cookie.name;
-    // console.log("Save setCookie");
+   
     if (getCookie(config.cookie.name) != undefined) {
         var resChat = [];
         var dtHistory = JSON.parse($.cookie(config.cookie.name));
@@ -369,57 +272,10 @@ function checkCookie() {
     if (history != undefined) {
         processGetCookie();
     } else {
-        // history = prompt("Please enter your name:","");
         processGetCookie();
 
     }
 }
-// Event for a Agent chat with a Customer, if multi chat need fix right here
-// function EndChat(messages) {
-//     if (messages == "left") {
-//         console.log("Need close chat");
-//         // chatbox_ui.showMessage(decodeString("System"), decodeString("You are alone in the chat room. Click (X) to close the chat interface."));
-//         createMsgIncome("You are alone in the chat room.", "Bot");
-
-//         // stop polling for chat events
-//         clearInterval(session.pollerID);
-//         // delete chat session with SocialMiner
-//         restUtil.deleteChat().done(new function() {
-//             console.log('Chat session terminated successfully.');
-//         });
-//         session.startChat = undefined; //session.startChat = undefined;
-
-//     }
-// }
-// Event for a Agent chat with a Customer, if multi chat need fix right here
-// function processEndChat(messages) {
-//     if ($.isArray(messages)) {
-//         for (var i = 0; i < messages.length; i++) {
-//             EndChat(messages[i].status);
-//         }
-//     } else {
-//         EndChat(messages.status);
-//     }
-// }
-
-/**
- * Processes incoming MessageEvents
- *
- * @param messages
- */
-// function processIncomingMessages(messages) {
-//     if ($.isArray(messages)) {
-//         for (var i = 0; i < messages.length; i++) {
-//             // chatbox_ui.showMessage(decodeString(messages[i].from), decodeString(messages[i].body));
-//             createMsgIncome(decodeString(messages[i].body));
-//             session.latestEventID = parseInt(messages[i].id);
-//         }
-//     } else {
-//         // chatbox_ui.showMessage(decodeString(messages.from), decodeString(messages.body));
-//         createMsgIncome(decodeString(messages.body));
-//         session.latestEventID = parseInt(messages.id);
-//     }
-// }
 
 function createMsgOut(messages, current_time = null) {
 
@@ -533,13 +389,15 @@ function createMsgIncomeQuestion(nameTag_ = null, tyle_ = null, class_ = null, i
     $(createQuestion).html(html_);
     $(createQuestion).attr("onClick", onclick_);
 
-
     // End
-
 
     var createSpan = document.createElement("span");
     $(createSpan).addClass("time");
     $(createSpan).text(getCurrentTime());
+
+    // valid input
+    // var stringValid = '<div class="valid-feedback feedback-icon"><i class="fa fa-check"></i></div>';
+    // var stringInValid = '<div class="invalid-feedback feedback-icon"><i class="fa fa-times"></i></div>';
 
     contentIncomeMsgChild.appendChild(createQuestion);
     contentIncomeMsgChild.appendChild(createSpan);
@@ -556,7 +414,7 @@ function createMsgIncomeQuestion(nameTag_ = null, tyle_ = null, class_ = null, i
 }
 
 function CreateChooseTeam(){
-    $("#messagesBody").append('<div class="s2-received-chats choose-team"><div class="s2-received-chats-img"><img src="'+urlImage+config.bot.img+'"></div><div class="s2-received-msg"><div class="s2-received-msg-inbox"><p>To point you in the right direction, what i3 team were you hoping to speak with today?</p><span class="time">'+getCurrentTime()+'</span><div class="t-options" style="margin-bottom:3%"><button class="options ops-1 ccx_csq_sales" id="ccx_csq_sales" name="ccx_csq_sales" value ='+ config.teamOptions.i3Sales +' >i3 Sales</button><button class="options ops-2 ccx_csq_support" name="ccx_csq_support" id="ccx_csq_support" value='+ config.teamOptions.i3Supports +' >i3 Support</button></div></div></div></div>');
+    $("#messagesBody").append('<div class="s2-received-chats choose-team"><div class="s2-received-chats-img"><img src="'+urlImage+config.bot.img+'"></div><div class="s2-received-msg"><div class="s2-received-msg-inbox"><p>To point you in the right direction, what i3 team were you hoping to speak with today?</p><span class="time">'+getCurrentTime()+'</span><div class="t-options" style="margin-bottom:3%;font-size: small;"><button class="options ops-1 ccx_csq_sales" id="ccx_csq_sales" name="ccx_csq_sales" value ='+ config.teamOptions.i3Sales +' >Customer Service</button><button class="options ops-2 ccx_csq_support" name="ccx_csq_support" id="ccx_csq_support" value='+ config.teamOptions.i3Supports +' >Tech Support</button></div></div></div></div>');
     loadElement();
     var element = document.getElementById("messagesBody");
     element.scrollTop = element.scrollHeight;
@@ -568,11 +426,11 @@ function userChoose(option){
     var stringDiv = '<div class="s2-outgoing-chat userChoose">';
     stringDiv +='<div class="s2-outgoing-chat-msg">';
     stringDiv +=    '<div class="s2-received-msg-inbox">';
-    stringDiv +=        '<div class="t-options" style="margin-bottom:3%">';
+    stringDiv +=        '<div class="t-options" style="margin-bottom:3%;font-size: small;">';
     if(option == 'ccx_csq_sales'){
-        stringDiv +='<button class="options ops-1 choose-ccx_csq_sales" id="choose-ccx_csq_sales" name="ccx_csq_sales" value='+ config.teamOptions.i3Sales +'>i3 Sales</button>';
+        stringDiv +='<button class="options ops-1 choose-ccx_csq_sales" id="choose-ccx_csq_sales" name="ccx_csq_sales" value='+ config.teamOptions.i3Sales +'>Customer Service</button>';
     }else if('ccx_csq_support'){
-        stringDiv +='<button class="options ops-2 choose-ccx_csq_support" name="ccx_csq_support" id="choose-ccx_csq_support" value='+ config.teamOptions.i3Supports +'>i3 Support</button>';    
+        stringDiv +='<button class="options ops-2 choose-ccx_csq_support" name="ccx_csq_support" id="choose-ccx_csq_support" value='+ config.teamOptions.i3Supports +'>Tech Support</button>';    
     }
     stringDiv += '<span class="time">'+getCurrentTime()+'</span>';
     stringDiv +='</div></div></div></div>';
