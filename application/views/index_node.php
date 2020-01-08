@@ -1,6 +1,7 @@
 <script type="text/javascript">
     var urlConfig = "<?php echo base_url() . 'plugins/chat/bubble_chat/config/config.json'?>";
     var urlImage = "<?php echo base_url() . 'plugins/chat/bubble_chat/img/';?>";
+    var urlPlugins = "<?php echo base_url() . 'plugins/chat/';?>";
 </script>
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
@@ -29,6 +30,37 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/x2js/1.2.0/xml2json.min.js"></script>
     <script src="<?php echo base_url() . 'plugins/chat/bubble_chat/scripts/main.js';?>" type="text/javascript"></script>
     <script src="<?php echo base_url() . 'plugins/chat/bubble_chat/scripts/constants.js';?>" type="text/javascript"></script>
+    <script language="JavaScript">
+    /**
+    * Plays a sound using the HTML5 audio tag. Provide mp3 and ogg files for best browser support.
+    * @param {string} filename The name of the file. Omit the ending!
+    */
+     function playSound(action){
+
+        // ======================================Start Chat============================================
+
+        var mp3SourceStart = '<source src="'+ urlPlugins + '/sound/' + config.sound.start + '.mp3" type="audio/mpeg">';
+        var oggSourceStart = '<source src="'+ urlPlugins + '/sound/' + config.sound.start + '.ogg" type="audio/ogg">';
+
+        // ======================================End Chat==============================================
+
+        var mp3SourceEnd = '<source src="'+ urlPlugins + '/sound/' + config.sound.end + '.mp3" type="audio/mpeg">';
+        var oggSourceEnd = '<source src="'+ urlPlugins + '/sound/' + config.sound.end + '.ogg" type="audio/ogg">';
+
+        switch(action) {
+
+          case "start":
+             document.getElementById("sound").innerHTML='<audio autoplay="autoplay">' + mp3SourceStart + oggSourceStart + '</audio>';
+            break;
+          case "end":
+             document.getElementById("sound").innerHTML='<audio autoplay="autoplay">' + mp3SourceEnd + oggSourceEnd + '</audio>';
+            break;
+          default:
+            // code here
+        }
+                   
+    }              
+    </script>
     <script language="JavaScript">
 
         var socialMinerChat = new socialminer.chat();
@@ -84,16 +116,34 @@
         }
 
         function processPresenceEvent(event) {
+
             var endChat = false;
             if (event.status == "joined") {
                 agentName = event.from;
                 // success("Chatting with" + event.from);
                 createMsgIncome("Chatting with " + event.from, "Bot");
 
+    // ==================================================================================
+    // ==========================Event Open Popup And Notify Sound=======================
+    // ==================================================================================
+
+                var conver = document.getElementById('conversation');
+                    conver.style.display = 'none';
+                var box_chat = document.getElementById('box_chat');
+                    box_chat.style.display ='block';
+                    box_chat.style.visibility = 'visible';
+                playSound("start");
+
+    // ==================================================================================
+    // ==========================End Event Open Popup And Notify Sound===================
+    // ==================================================================================
+
                 setUiState(CHAT_UI_STATES.CHATTING);
+
             } else if (event.status == "left") {
                 // info(event.from + " has left");
                 createMsgIncome(event.from + " has left", "Bot");
+                playSound("end");
                 console.log("Save history");
                 checkCookie();
                 endChat = messageCount == 0;
@@ -241,37 +291,29 @@
         function setUiState(state) {
             switch (state) {
                 case CHAT_UI_STATES.ENTERING_INFO:
-                // console.log("Run Start");
 
                     // Implement Bubble Chat
                     $(".sendMsg").css("visibility","hidden");
-                    if (($(".choose-team").length > 0)){
-                    // $(".choose-team").remove();
-                    // createMsgIncomeQuestion("button", "button", "btn btn-default", "btn_start", "", "", "", "Start chat", 'initiateChat()');
-                    }
                    
-										CreateChooseTeam();                  
-                
-                  //  console.log("session.PresentSession: ",session.PresentSession);
-                  //  console.log("DONE X");
-                  //  if(session.PresentSession == false){
-                  //    CreateChooseTeam();
-                  //    session.PresentSession = "End";
-                  //  }
+					CreateChooseTeam();                  
+                  
                     break;
 
                 case CHAT_UI_STATES.WAITING_FOR_AGENT:
 
                     // Implement Bubble Chat
                     $(".sendMsg").css("visibility","hidden");
+
                     if (($(".btn_start").length > 0)){
                         $(".btn_start").remove();
                     }
+
                     if(($(".info").length > 0)){
                         $(".info").remove();
-										}
-										if (($(".choose-team").length > 0)){
-                    $(".choose-team").remove();
+					}
+
+					if (($(".choose-team").length > 0)){
+                         $(".choose-team").remove();
                     }
                     break;
 
@@ -285,6 +327,10 @@
                     if(($(".info").length > 0)){
                         $(".info").remove();
                     }
+                    if (($(".choose-team").length > 0)){
+                        $(".choose-team").remove();
+                    }
+                   
                     break;
 
                 case CHAT_UI_STATES.TRANSCRIPT_PROMPT:
@@ -320,34 +366,8 @@
         }
 
         $(document).ready(function() {
+
             setUiState(CHAT_UI_STATES.ENTERING_INFO);
-
-            // $("#yesDownload").click(function() {
-            //     $('<iframe id="downloadFrame">').width(1).height(1).css("display", "none")
-            //         .appendTo("body").attr("src", socialMinerChat.getTranscriptDownloadUrl());
-            //     socialMinerChat.delete();
-            //     setUiState(CHAT_UI_STATES.END);
-            //     setUiState(CHAT_UI_STATES.ENTERING_INFO);
-            // });
-
-            // $("#noDownload").click(function() {
-            //     socialMinerChat.stopPolling();
-            //     socialMinerChat.delete();
-            //     setUiState(CHAT_UI_STATES.END);
-            //     setUiState(CHAT_UI_STATES.ENTERING_INFO);
-            // });
-
-            // $("#leave").click(function() {
-            //     socialMinerChat.leave(function() {
-            //             socialminer.utils.log("leave success");
-            //             info("You have left the chat room");
-            //             createMsgIncome("You have left the chat room.", "Bot");
-            //             setUiState(CHAT_UI_STATES.TRANSCRIPT_PROMPT);
-            //         },
-            //         function(xhr, status) {
-            //             socialminer.utils.log("leave error:" + status);
-            //         });
-            // });
 
             $(".sendMsg").keypress(function(event) {
                 var statusMsg, message = $(".sendMsg").val();
@@ -365,7 +385,6 @@
                                     from: "me",
                                     body: message
                                 });
-                                // { type: MessageEvent, id: eventId, from: user, body: messageText }
                                 socialMinerChat.pushHisclient([{  id : (socialMinerChat.lastEventID()+1).toString(), body : message, from : "me", type: "MessageEvent" }]);
                                 socialminer.utils.log("send success");
                             },
@@ -389,7 +408,6 @@
     </script>
 </head>
 <body style="background-color: transparent;" onload="loadSessionChat()">
-<!-- <button onClick="startPolling()">Start Polling</button> -->
     <div>
         <div class="box-conversation" style="display: block;" id="conversation">
             <div class="box-header">
@@ -509,6 +527,7 @@
                   <img src="<?php echo base_url() . 'plugins/chat/bubble_chat/img/f-comment.svg';?>" alt=" ">
                 </i>
               </a>
+            <div id="sound" style="display: none;"></div>
     </div>
               <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.slim.min.js"
                 integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo " crossorigin="anonymous ">
@@ -518,27 +537,54 @@
               </script>
               <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js " integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa " crossorigin="anonymous "></script>
               <script src="<?php echo base_url() . 'plugins/chat/bubble_chat/less/less.min.js';?>"></script>
-
+              
               <script>
                 $(document).ready(function () {
-                  // var element = document.getElementById("messagesBody");
-                  // element.scrollTop = element.scrollHeight;
-                  $(".carousel ").carousel();    
+                
+
+                $(window).on("blur focus", function(e) {
+
+                    var prevType = $(this).data("prevType");
+
+                    if (prevType != e.type) {   //  reduce double fire issues
+
+                        switch (e.type) {
+                            case "blur":
+                                console.log("Out page");
+                                session.window = false;
+                                break;
+                            case "focus":
+                                console.log("In page");
+                                session.window = true;
+                                break;
+                        }
+                    }
+
+                    $(this).data("prevType", e.type);
+                })
+
+
+                  $(".carousel ").carousel();   
+
                   $(".new-conver").click(function () {
+
                     $(".box-conversation").hide();
+
                     $(".box").css({
-                    visibility: "visible"
-                    });
+                         visibility: "visible"
+                        });
 
                     $(".s1-chat-page").show();
                     
                     $(".com-name").click(function () {
-                    $(".box").css({
-                        visibility: "hidden"
-                    });
+                        $(".box").css({
+                            visibility: "hidden"
+                        });
                     $(".box-conversation").show();
+
                     });
-                    });
+
+                });
                     loadElement();
               });
                    function loadElement(){
@@ -577,6 +623,7 @@
                         // parent.postMessage('none',  config.iframeDOM.parent);
                         }
                     }
+
               </script>      
     </div>
 

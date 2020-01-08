@@ -40,5 +40,9 @@
     },
     "apiUrl":{
         "baseUrl":"https://localhost/bubble_chat/index.php/ChatApi"
+    },
+    "sound" :{
+        "start":"message-income",
+        "end"  :"end-chat"
     }
 }

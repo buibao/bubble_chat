@@ -252,9 +252,14 @@ function setCookie(cvalue) {
         if(value.transcript != undefined && value.transcript.chat != undefined){
             Array.isArray(value.transcript.chat) ?  resChat.push(...value.transcript.chat) :  resChat.push(value.transcript.chat);
             console.log("Run value");
+            value.transcript.chat = resChat;
+            cvalue = JSON.stringify(value);
+        }else {
+
+            value = { ...value, transcript: { chat: resChat }};
+            cvalue = JSON.stringify(value);
         }
-        value.transcript.chat = resChat;
-        cvalue = JSON.stringify(value);
+
     }
     $.cookie(cname, cvalue);
     // from view
